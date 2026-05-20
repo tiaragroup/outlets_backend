@@ -20,11 +20,11 @@ async function bootstrap() {
     }),
   );
 
-  const port = Number(process.env.APP_PORT || 4000);
+  const port = Number(process.env.PORT || process.env.APP_PORT || 4000);
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
-  console.log(`API running on http://localhost:${port}/api`);
+  console.log(`API running on port ${port}`);
 }
 
 bootstrap();

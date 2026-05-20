@@ -12,7 +12,13 @@ import { UsersModule } from './users/users.module';
 
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
+
+      // Local: DB_HOST=localhost
+      // Cloud Run/Firebase: INSTANCE_CONNECTION_NAME=project-id:region:instance-name
+      host: process.env.INSTANCE_CONNECTION_NAME
+        ? `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`
+        : process.env.DB_HOST,
+
       port: Number(process.env.DB_PORT || 5432),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
@@ -20,9 +26,12 @@ import { UsersModule } from './users/users.module';
 
       autoLoadEntities: true,
 
+      // Always false. Use migrations.
       synchronize: false,
+
       logging: process.env.NODE_ENV !== 'production',
 
+      // Local and Cloud SQL socket both use DB_SSL=false
       ssl:
         process.env.DB_SSL === 'true'
           ? {
