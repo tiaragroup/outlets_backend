@@ -15,11 +15,11 @@ import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('modules')
 export class ModulesController {
   constructor(private readonly modulesService: ModulesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateModuleDto) {
     return this.modulesService.create(dto);
@@ -35,11 +35,13 @@ export class ModulesController {
     return this.modulesService.findOne(id, lang);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateModuleDto) {
     return this.modulesService.update(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.modulesService.remove(id);
