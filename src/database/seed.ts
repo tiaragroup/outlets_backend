@@ -2,10 +2,14 @@ import 'dotenv/config';
 import * as bcrypt from 'bcrypt';
 import dataSource from './data-source';
 import { User, UserRole } from '../users/entities/user.entity';
+import { seedModules } from './seeders/modules.seeder';
 
 async function seed() {
   await dataSource.initialize();
 
+  /**
+   * Seed admin user
+   */
   const userRepository = dataSource.getRepository(User);
 
   const email = 'admin@tiaragroup.com';
@@ -43,7 +47,14 @@ async function seed() {
   console.log('Email:', email);
   console.log('Password:', plainPassword);
 
+  /**
+   * Seed outlet modules
+   */
+  await seedModules(dataSource);
+
   await dataSource.destroy();
+
+  console.log('All seeders completed successfully');
 }
 
 seed().catch(async (error) => {
