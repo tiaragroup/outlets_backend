@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import dataSource from './data-source';
 import { User, UserRole } from '../users/entities/user.entity';
 import { seedModules } from './seeders/modules.seeder';
+import { seedBakersMenu } from './seeders/bakers-menu.seeder';
 
 async function seed() {
   await dataSource.initialize();
@@ -51,6 +52,7 @@ async function seed() {
    * Seed outlet modules
    */
   await seedModules(dataSource);
+  await seedBakersMenu(dataSource);
 
   await dataSource.destroy();
 

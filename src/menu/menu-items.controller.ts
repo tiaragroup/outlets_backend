@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { MenuItemsService } from './services/menu-items.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
@@ -23,6 +34,23 @@ export class MenuItemsController {
     return this.menuItemsService.findAll(
       categoryId ? Number(categoryId) : undefined,
       moduleId ? Number(moduleId) : undefined,
+      lang,
+    );
+  }
+
+  /**
+   * Example:
+   * GET /api/menu-items/by-category/cakes?moduleSlug=bakers-bakery&lang=en
+   */
+  @Get('by-category/:categorySlug')
+  findByCategorySlug(
+    @Param('categorySlug') categorySlug: string,
+    @Query('moduleSlug') moduleSlug: string,
+    @Query('lang') lang = 'en',
+  ) {
+    return this.menuItemsService.findByCategorySlug(
+      categorySlug,
+      moduleSlug,
       lang,
     );
   }

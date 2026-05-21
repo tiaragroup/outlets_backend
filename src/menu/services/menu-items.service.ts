@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, EntityManager, In, Repository } from 'typeorm';
 import { MenuItem } from '../entities/menu-item.entity';
 import { MenuCategory } from '../entities/menu-category.entity';
 import { MenuItemVariant } from '../entities/menu-item-variant.entity';
@@ -17,10 +21,13 @@ import {
 export class MenuItemsService {
   constructor(
     private readonly dataSource: DataSource,
+
     @InjectRepository(MenuItem)
     private readonly menuItemRepository: Repository<MenuItem>,
+
     @InjectRepository(MenuCategory)
     private readonly categoryRepository: Repository<MenuCategory>,
+
     private readonly translationsService: TranslationsService,
   ) {}
 
@@ -64,8 +71,13 @@ export class MenuItemsService {
   async findAll(categoryId?: number, moduleId?: number, lang?: string) {
     const where: any = {};
 
-    if (categoryId) where.categoryId = categoryId;
-    if (moduleId) where.moduleId = moduleId;
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
+    if (moduleId) {
+      where.moduleId = moduleId;
+    }
 
     const items = await this.menuItemRepository.find({
       where,
@@ -86,6 +98,73 @@ export class MenuItemsService {
     });
 
     return this.attachTranslations(items, lang);
+  }
+
+  async findByCategorySlug(
+    categorySlug: string,
+    moduleSlug: string,
+    lang = 'en',
+  ) {
+    if (!moduleSlug) {
+      throw new BadRequestException('moduleSlug is required');
+    }
+
+    const category = await this.categoryRepository
+      .createQueryBuilder('category')
+      .innerJoinAndSelect('category.module', 'module')
+      .where('category.slug = :categorySlug', { categorySlug })
+      .andWhere('module.slug = :moduleSlug', { moduleSlug })
+      .getOne();
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    const items = await this.menuItemRepository.find({
+      where: {
+        categoryId: category.id,
+      },
+      relations: {
+        variants: true,
+        itemAddons: {
+          addon: true,
+        },
+      },
+      order: {
+        priority: 'ASC',
+        id: 'ASC',
+        variants: {
+          priority: 'ASC',
+          id: 'ASC',
+        },
+      },
+    });
+
+    const translatedItems = await this.attachTranslations(items, lang);
+
+    const categoryTranslations =
+      await this.translationsService.getTranslationByLang(
+        TranslationModelType.MENU_CATEGORY,
+        [category.id],
+        lang,
+      );
+
+    return {
+      category: {
+        id: category.id,
+        moduleId: category.moduleId,
+        moduleSlug,
+        slug: category.slug,
+        image: category.image,
+        priority: category.priority,
+        isActive: category.isActive,
+        createdAt: category.createdAt,
+        updatedAt: category.updatedAt,
+        name: categoryTranslations[category.id]?.name || '',
+        description: categoryTranslations[category.id]?.description || '',
+      },
+      items: translatedItems,
+    };
   }
 
   async findOne(id: number, lang?: string) {
@@ -110,6 +189,7 @@ export class MenuItemsService {
     }
 
     const result = await this.attachTranslations([item], lang);
+
     return result[0];
   }
 
@@ -198,7 +278,7 @@ export class MenuItemsService {
   }
 
   private async replaceVariants(
-    manager,
+    manager: EntityManager,
     menuItemId: number,
     variants: any[],
   ) {
@@ -242,7 +322,11 @@ export class MenuItemsService {
     }
   }
 
-  private async replaceAddons(manager, menuItemId: number, addonIds: number[]) {
+  private async replaceAddons(
+    manager: EntityManager,
+    menuItemId: number,
+    addonIds: number[],
+  ) {
     const itemAddonRepo = manager.getRepository(MenuItemAddon);
 
     await itemAddonRepo.delete({
@@ -261,9 +345,11 @@ export class MenuItemsService {
 
   private async attachTranslations(items: MenuItem[], lang?: string) {
     const itemIds = items.map((item) => item.id);
+
     const variantIds = items.flatMap((item) =>
       item.variants ? item.variants.map((variant) => variant.id) : [],
     );
+
     const addonIds = items.flatMap((item) =>
       item.itemAddons
         ? item.itemAddons.map((itemAddon) => itemAddon.addonId)
@@ -307,12 +393,14 @@ export class MenuItemsService {
       ...item,
       translations: lang ? undefined : itemTranslations[item.id] || {},
       ...(lang ? itemTranslations[item.id] || {} : {}),
+
       variants:
         item.variants?.map((variant) => ({
           ...variant,
           translations: lang ? undefined : variantTranslations[variant.id] || {},
           ...(lang ? variantTranslations[variant.id] || {} : {}),
         })) || [],
+
       addons:
         item.itemAddons?.map((itemAddon) => ({
           ...itemAddon.addon,
