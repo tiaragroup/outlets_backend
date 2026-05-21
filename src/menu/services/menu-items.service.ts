@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, In, Repository } from 'typeorm';
+import { OutletModule } from '../entities/module.entity';
 import { MenuItem } from '../entities/menu-item.entity';
 import { MenuCategory } from '../entities/menu-category.entity';
 import { MenuItemVariant } from '../entities/menu-item-variant.entity';
@@ -27,6 +28,9 @@ export class MenuItemsService {
 
     @InjectRepository(MenuCategory)
     private readonly categoryRepository: Repository<MenuCategory>,
+
+    @InjectRepository(OutletModule)
+    private readonly moduleRepository: Repository<OutletModule>,
 
     private readonly translationsService: TranslationsService,
   ) {}
@@ -68,20 +72,36 @@ export class MenuItemsService {
     return this.findOne(id);
   }
 
-  async findAll(categoryId?: number, moduleId?: number, lang?: string) {
+  async findAll(
+    categoryId?: number,
+    moduleId?: number,
+    moduleSlug?: string,
+    lang?: string,
+  ) {
     const where: any = {};
 
     if (categoryId) {
       where.categoryId = categoryId;
     }
 
-    if (moduleId) {
+    if (moduleSlug) {
+      const module = await this.moduleRepository.findOne({
+        where: { slug: moduleSlug },
+      });
+
+      if (!module) {
+        throw new NotFoundException('Module not found');
+      }
+
+      where.moduleId = module.id;
+    } else if (moduleId) {
       where.moduleId = moduleId;
     }
 
     const items = await this.menuItemRepository.find({
       where,
       relations: {
+        category: true,
         variants: true,
         itemAddons: {
           addon: true,
@@ -125,6 +145,7 @@ export class MenuItemsService {
         categoryId: category.id,
       },
       relations: {
+        category: true,
         variants: true,
         itemAddons: {
           addon: true,
@@ -171,6 +192,7 @@ export class MenuItemsService {
     const item = await this.menuItemRepository.findOne({
       where: { id },
       relations: {
+        category: true,
         variants: true,
         itemAddons: {
           addon: true,
@@ -346,6 +368,10 @@ export class MenuItemsService {
   private async attachTranslations(items: MenuItem[], lang?: string) {
     const itemIds = items.map((item) => item.id);
 
+    const categoryIds = [
+      ...new Set(items.map((item) => item.categoryId).filter(Boolean)),
+    ];
+
     const variantIds = items.flatMap((item) =>
       item.variants ? item.variants.map((variant) => variant.id) : [],
     );
@@ -365,6 +391,17 @@ export class MenuItemsService {
       : await this.translationsService.getTranslations(
           TranslationModelType.MENU_ITEM,
           itemIds,
+        );
+
+    const categoryTranslations = lang
+      ? await this.translationsService.getTranslationByLang(
+          TranslationModelType.MENU_CATEGORY,
+          categoryIds,
+          lang,
+        )
+      : await this.translationsService.getTranslations(
+          TranslationModelType.MENU_CATEGORY,
+          categoryIds,
         );
 
     const variantTranslations = lang
@@ -391,6 +428,24 @@ export class MenuItemsService {
 
     return items.map((item) => ({
       ...item,
+
+      category: item.category
+        ? {
+            id: item.category.id,
+            moduleId: item.category.moduleId,
+            slug: item.category.slug,
+            image: item.category.image,
+            priority: item.category.priority,
+            isActive: item.category.isActive,
+            createdAt: item.category.createdAt,
+            updatedAt: item.category.updatedAt,
+            translations: lang
+              ? undefined
+              : categoryTranslations[item.category.id] || {},
+            ...(lang ? categoryTranslations[item.category.id] || {} : {}),
+          }
+        : null,
+
       translations: lang ? undefined : itemTranslations[item.id] || {},
       ...(lang ? itemTranslations[item.id] || {} : {}),
 

@@ -29,19 +29,17 @@ export class MenuItemsController {
   findAll(
     @Query('categoryId') categoryId?: string,
     @Query('moduleId') moduleId?: string,
+    @Query('moduleSlug') moduleSlug?: string,
     @Query('lang') lang?: string,
   ) {
     return this.menuItemsService.findAll(
       categoryId ? Number(categoryId) : undefined,
       moduleId ? Number(moduleId) : undefined,
+      moduleSlug,
       lang,
     );
   }
 
-  /**
-   * Example:
-   * GET /api/menu-items/by-category/cakes?moduleSlug=bakers-bakery&lang=en
-   */
   @Get('by-category/:categorySlug')
   findByCategorySlug(
     @Param('categorySlug') categorySlug: string,
