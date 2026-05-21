@@ -2,12 +2,15 @@ import { DataSource } from 'typeorm';
 
 type BakersMenuVariant = {
   label: string;
+  labelAr?: string;
   price: number;
 };
 
 type BakersMenuItem = {
   name: string;
+  nameAr?: string;
   description: string;
+  descriptionAr?: string;
   variants: BakersMenuVariant[];
   image?: string;
   isActive?: boolean;
@@ -16,6 +19,7 @@ type BakersMenuItem = {
 type BakersMenuSection = {
   id: string;
   title: string;
+  titleAr?: string;
   items: BakersMenuItem[];
 };
 
@@ -23,69 +27,82 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'cakes',
     title: 'Cakes',
+    titleAr: 'الكيك',
     items: [
       {
         name: 'Rocher Cake',
+        nameAr: 'كيك روشيه',
         description: 'praline, biscuite, soft mousse',
+        descriptionAr: 'برالين، بسكويت، موس ناعم',
         image: '/assets/images/bakers/cakes/Rocher-Cake.png',
         variants: [
-          { label: 'Tier A', price: 335 },
-          { label: 'Tier B', price: 310 },
-          { label: 'Tier C', price: 275 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 335 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 310 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 275 },
         ],
         isActive: true,
       },
       {
         name: 'Mouroise',
+        nameAr: 'مورويس',
         description: 'cardamom ganche. Breton. Marmalade',
+        descriptionAr: 'غاناش الهيل، بريتون، مربى',
         variants: [],
         isActive: false,
       },
       {
         name: 'Pecan Chocolate',
+        nameAr: 'شوكولاتة البيكان',
         description: 'caramel creamux, crunchy, milk chocolate whipped ganache',
+        descriptionAr: 'كريمو كراميل، كرانشي، غاناش شوكولاتة الحليب المخفوق',
         image: '/assets/images/bakers/cakes/Pecan-Chocolate.png',
         variants: [
-          { label: 'Tier A', price: 345 },
-          { label: 'Tier B', price: 315 },
-          { label: 'Tier C', price: 280 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 345 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 315 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 280 },
         ],
         isActive: true,
       },
       {
         name: 'Pistachio & Raspberry',
+        nameAr: 'الفستق والتوت',
         description:
           'dacquoise, pistachio creamux, raspberry confit, pistachio crumble',
+        descriptionAr: 'داكواز، كريمو الفستق، كونفي التوت، كرامبل الفستق',
         image:
           '/assets/images/bakers/cakes/Pistachio-raspberry-mousse-on-a-plate.png',
         variants: [
-          { label: 'Tier A', price: 355 },
-          { label: 'Tier B', price: 325 },
-          { label: 'Tier C', price: 290 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 355 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 325 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 290 },
         ],
         isActive: true,
       },
       {
         name: 'Tiara Mousse Special',
+        nameAr: 'موس تيارا الخاص',
         description: 'dark chocolate 64%, chocolate sponge, hazelnut crumble',
+        descriptionAr: 'شوكولاتة داكنة 64%، إسفنج شوكولاتة، كرامبل البندق',
         image:
           '/assets/images/bakers/cakes/Velvet-chocolate-mousse-cake-with-hazelnuts.png',
         variants: [
-          { label: 'Tier A', price: 345 },
-          { label: 'Tier B', price: 315 },
-          { label: 'Tier C', price: 280 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 345 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 315 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 280 },
         ],
         isActive: true,
       },
       {
         name: 'Saint Sebastian',
+        nameAr: 'سان سيباستيان',
         description: 'creamy cheese, vanilla',
+        descriptionAr: 'جبنة كريمية، فانيليا',
         image:
           '/assets/images/bakers/cakes/Creamy Basque cheesecake on a plate.png',
         variants: [
-          { label: 'Tier A', price: 365 },
-          { label: 'Tier B', price: 330 },
-          { label: 'Tier C', price: 295 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 365 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 330 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 295 },
         ],
         isActive: true,
       },
@@ -94,26 +111,31 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'glass-plate-dessert-showcase',
     title: 'Glass Plate Dessert Showcase',
+    titleAr: 'عرض حلويات الأطباق الزجاجية',
     items: [
       {
         name: 'Classic Tiramisu',
+        nameAr: 'تيراميسو كلاسيك',
         description: 'crunchy, salted caramel, viennos, mascarpone cream',
+        descriptionAr: 'كرانشي، كراميل مملح، فينواز، كريمة ماسكاربوني',
         image: '/assets/images/bakers/show-case/Classic-Tiramisu.png',
         variants: [
-          { label: 'Tier A', price: 345 },
-          { label: 'Tier B', price: 315 },
-          { label: 'Tier C', price: 285 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 345 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 315 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 285 },
         ],
         isActive: true,
       },
       {
         name: 'Mango Cheese Cake',
+        nameAr: 'تشيز كيك المانجو',
         description: 'new york cheese cake, mango jam, insert, fresh mango',
+        descriptionAr: 'تشيز كيك نيويورك، مربى مانجو، حشوة، مانجو طازج',
         image: '/assets/images/bakers/show-case/Mango-Cheese-Cake.png',
         variants: [
-          { label: 'Tier A', price: 95 },
-          { label: 'Tier B', price: 85 },
-          { label: 'Tier C', price: 75 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 95 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 85 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 75 },
         ],
         isActive: true,
       },
@@ -122,64 +144,75 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'individual',
     title: 'Individual',
+    titleAr: 'حلويات فردية',
     items: [
       {
         name: 'Crunchy Tiramisu',
+        nameAr: 'تيراميسو كرانشي',
         description: 'old fashion glass',
+        descriptionAr: 'كأس أولد فاشن',
         image:
           '/assets/images/bakers/individual/Layered-dessert-with-cocoa-and-crunch.png',
         variants: [
-          { label: 'Tier A', price: 58 },
-          { label: 'Tier B', price: 52 },
-          { label: 'Tier C', price: 45 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 58 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 52 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 45 },
         ],
         isActive: true,
       },
       {
         name: 'Berries Cream Brulee',
+        nameAr: 'كريم بروليه بالتوت',
         description: 'old fashion glass',
+        descriptionAr: 'كأس أولد فاشن',
         image:
           '/assets/images/bakers/individual/Layered-berry-crème-brûlée-delight.png',
         variants: [
-          { label: 'Tier A', price: 55 },
-          { label: 'Tier B', price: 48 },
-          { label: 'Tier C', price: 42 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 55 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 48 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 42 },
         ],
         isActive: true,
       },
       {
         name: 'Pecan Chocolate',
+        nameAr: 'شوكولاتة البيكان',
         description: 'rectangle 10 cm by 3 cm',
+        descriptionAr: 'مستطيل 10 سم × 3 سم',
         image:
           '/assets/images/bakers/individual/Decadent chocolate dessert with pecans.png',
         variants: [
-          { label: 'Tier A', price: 52 },
-          { label: 'Tier B', price: 46 },
-          { label: 'Tier C', price: 40 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 52 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 46 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 40 },
         ],
         isActive: true,
       },
       {
         name: 'Rocher Cake',
+        nameAr: 'كيك روشيه',
         description: 'triangle 10 cm by 5 cm',
+        descriptionAr: 'مثلث 10 سم × 5 سم',
         image:
           '/assets/images/bakers/individual/Decadent chocolate dessert with pecans.png',
         variants: [
-          { label: 'Tier A', price: 45 },
-          { label: 'Tier B', price: 38 },
-          { label: 'Tier C', price: 32 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 45 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 38 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 32 },
         ],
         isActive: true,
       },
       {
         name: 'Paris Brest',
+        nameAr: 'باريس بريست',
         description: 'round shape',
+        descriptionAr: 'شكل دائري',
         image:
           '/assets/images/bakers/individual/Elegant-Paris-Brest-with-hazelnut-topping.png',
         variants: [
-          { label: 'Tier A', price: 48 },
-          { label: 'Tier B', price: 42 },
-          { label: 'Tier C', price: 36 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 48 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 42 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 36 },
         ],
         isActive: true,
       },
@@ -188,28 +221,33 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'macarons',
     title: 'Macarons',
+    titleAr: 'ماكارون',
     items: [
       {
         name: 'Vanilla Macaroon',
+        nameAr: 'ماكارون الفانيليا',
         description: 'as per choice',
+        descriptionAr: 'حسب الاختيار',
         image:
           '/assets/images/bakers/macarons/Elegant-macaron-with-vanilla-accents.png',
         variants: [
-          { label: 'Tier A', price: 12 },
-          { label: 'Tier B', price: 10 },
-          { label: 'Tier C', price: 8.5 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 12 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 10 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 8.5 },
         ],
         isActive: true,
       },
       {
         name: 'Pistachio Macaroon',
+        nameAr: 'ماكارون الفستق',
         description: 'as per choice',
+        descriptionAr: 'حسب الاختيار',
         image:
           '/assets/images/bakers/macarons/Pistachio-macaron-with-crumbs-and-nuts.png',
         variants: [
-          { label: 'Tier A', price: 12 },
-          { label: 'Tier B', price: 10 },
-          { label: 'Tier C', price: 8.5 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 12 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 10 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 8.5 },
         ],
         isActive: true,
       },
@@ -218,24 +256,29 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'travel-cakes',
     title: 'Travel Cakes',
+    titleAr: 'كيك السفر',
     items: [
       {
         name: 'Marble Cake',
+        nameAr: 'كيك الرخام',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 145 },
-          { label: 'Tier B', price: 125 },
-          { label: 'Tier C', price: 110 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 145 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 125 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 110 },
         ],
         isActive: true,
       },
       {
         name: 'Lime Cake',
+        nameAr: 'كيك الليمون',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 145 },
-          { label: 'Tier B', price: 125 },
-          { label: 'Tier C', price: 110 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 145 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 125 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 110 },
         ],
         isActive: true,
       },
@@ -244,34 +287,41 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'bon-bon',
     title: 'Bon Bon',
+    titleAr: 'بون بون',
     items: [
       {
         name: 'Passion & Mango',
+        nameAr: 'باشن فروت ومانجو',
         description: 'passion fruit ganache, mango jelly insert',
+        descriptionAr: 'غاناش باشن فروت، حشوة جيلي المانجو',
         variants: [
-          { label: 'Tier A', price: 11 },
-          { label: 'Tier B', price: 9 },
-          { label: 'Tier C', price: 7.5 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 11 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 9 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 7.5 },
         ],
         isActive: true,
       },
       {
         name: 'Lemon Ginger',
+        nameAr: 'ليمون وزنجبيل',
         description: 'white chocolate, ginger, lemon juice',
+        descriptionAr: 'شوكولاتة بيضاء، زنجبيل، عصير ليمون',
         variants: [
-          { label: 'Tier A', price: 10 },
-          { label: 'Tier B', price: 8.5 },
-          { label: 'Tier C', price: 7 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 10 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 8.5 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 7 },
         ],
         isActive: true,
       },
       {
         name: 'Dates',
+        nameAr: 'تمر',
         description: 'sukri date, cream 34%, chocolate',
+        descriptionAr: 'تمر سكري، كريمة 34%، شوكولاتة',
         variants: [
-          { label: 'Tier A', price: 11 },
-          { label: 'Tier B', price: 9 },
-          { label: 'Tier C', price: 7.5 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 11 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 9 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 7.5 },
         ],
         isActive: true,
       },
@@ -280,34 +330,41 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'classic-chocolate-enrobed',
     title: 'Classic Chocolate Enrobed',
+    titleAr: 'شوكولاتة كلاسيكية مغلفة',
     items: [
       {
         name: 'Mistika',
+        nameAr: 'مستكة',
         description: 'mistika, cream, chocolate',
+        descriptionAr: 'مستكة، كريمة، شوكولاتة',
         variants: [
-          { label: 'Tier A', price: 10 },
-          { label: 'Tier B', price: 8.5 },
-          { label: 'Tier C', price: 7 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 10 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 8.5 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 7 },
         ],
         isActive: true,
       },
       {
         name: 'Mint',
+        nameAr: 'نعناع',
         description: 'mint leaves, mentose, chocolate, cream',
+        descriptionAr: 'أوراق نعناع، منتوس، شوكولاتة، كريمة',
         variants: [
-          { label: 'Tier A', price: 9 },
-          { label: 'Tier B', price: 7.5 },
-          { label: 'Tier C', price: 6 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 9 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 7.5 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 6 },
         ],
         isActive: true,
       },
       {
         name: 'Choco Pie',
+        nameAr: 'شوكو باي',
         description: 'alunga, cream, butter, glucose',
+        descriptionAr: 'ألُونغا، كريمة، زبدة، جلوكوز',
         variants: [
-          { label: 'Tier A', price: 9 },
-          { label: 'Tier B', price: 7.5 },
-          { label: 'Tier C', price: 6 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 9 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 7.5 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 6 },
         ],
         isActive: true,
       },
@@ -316,24 +373,29 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'praline-enrobed',
     title: 'Praline Enrobed',
+    titleAr: 'برالين مغلف',
     items: [
       {
         name: 'Hazelnut Rocher',
+        nameAr: 'روشيه البندق',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 11 },
-          { label: 'Tier B', price: 9 },
-          { label: 'Tier C', price: 7.5 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 11 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 9 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 7.5 },
         ],
         isActive: true,
       },
       {
         name: 'Pecan Crunch',
+        nameAr: 'كرانش البيكان',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 11 },
-          { label: 'Tier B', price: 9 },
-          { label: 'Tier C', price: 7.5 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 11 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 9 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 7.5 },
         ],
         isActive: true,
       },
@@ -342,24 +404,29 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'mellow-cake-enrobed',
     title: 'Mellow Cake Enrobed',
+    titleAr: 'ميلو كيك مغلف',
     items: [
       {
         name: 'Marshmallow Raspberry',
+        nameAr: 'مارشميلو التوت',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 9 },
-          { label: 'Tier B', price: 7.5 },
-          { label: 'Tier C', price: 6 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 9 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 7.5 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 6 },
         ],
         isActive: true,
       },
       {
         name: 'Marshmallow Hazelnut',
+        nameAr: 'مارشميلو البندق',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 9 },
-          { label: 'Tier B', price: 7.5 },
-          { label: 'Tier C', price: 6 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 9 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 7.5 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 6 },
         ],
         isActive: true,
       },
@@ -368,44 +435,53 @@ const bakersMenuSections: BakersMenuSection[] = [
   {
     id: 'bakery-section',
     title: 'Bakery Section',
+    titleAr: 'قسم المخبوزات',
     items: [
       {
         name: 'Banana Bread Loaf',
+        nameAr: 'رغيف خبز الموز',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 145 },
-          { label: 'Tier B', price: 125 },
-          { label: 'Tier C', price: 110 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 145 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 125 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 110 },
         ],
         isActive: true,
       },
       {
         name: 'Brioche Bread Loaf',
+        nameAr: 'رغيف خبز البريوش',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 65 },
-          { label: 'Tier B', price: 55 },
-          { label: 'Tier C', price: 45 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 65 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 55 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 45 },
         ],
         isActive: true,
       },
       {
         name: 'Pain au Chocolate',
+        nameAr: 'بان أو شوكولا',
         description: '120 gram',
+        descriptionAr: '120 جرام',
         variants: [
-          { label: 'Tier A', price: 26 },
-          { label: 'Tier B', price: 22 },
-          { label: 'Tier C', price: 18 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 26 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 22 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 18 },
         ],
         isActive: true,
       },
       {
         name: 'Turkey & Cheddar Croissant',
+        nameAr: 'كرواسون ديك رومي وشيدر',
         description: '',
+        descriptionAr: '',
         variants: [
-          { label: 'Tier A', price: 28 },
-          { label: 'Tier B', price: 24 },
-          { label: 'Tier C', price: 20 },
+          { label: 'Tier A', labelAr: 'الفئة أ', price: 28 },
+          { label: 'Tier B', labelAr: 'الفئة ب', price: 24 },
+          { label: 'Tier C', labelAr: 'الفئة ج', price: 20 },
         ],
         isActive: true,
       },
@@ -501,6 +577,16 @@ export async function seedBakersMenu(dataSource: DataSource) {
       categoryId,
       'name',
       section.title,
+      'en',
+    );
+
+    await upsertTranslation(
+      dataSource,
+      'menu_category',
+      categoryId,
+      'name',
+      section.titleAr,
+      'ar',
     );
 
     for (const [itemIndex, item] of section.items.entries()) {
@@ -544,6 +630,7 @@ export async function seedBakersMenu(dataSource: DataSource) {
         menuItemId,
         'name',
         item.name,
+        'en',
       );
 
       await upsertTranslation(
@@ -552,6 +639,25 @@ export async function seedBakersMenu(dataSource: DataSource) {
         menuItemId,
         'description',
         item.description,
+        'en',
+      );
+
+      await upsertTranslation(
+        dataSource,
+        'menu_item',
+        menuItemId,
+        'name',
+        item.nameAr,
+        'ar',
+      );
+
+      await upsertTranslation(
+        dataSource,
+        'menu_item',
+        menuItemId,
+        'description',
+        item.descriptionAr,
+        'ar',
       );
 
       const oldVariants = await dataSource.query(
@@ -610,10 +716,20 @@ export async function seedBakersMenu(dataSource: DataSource) {
           variantId,
           'label',
           variant.label,
+          'en',
+        );
+
+        await upsertTranslation(
+          dataSource,
+          'menu_item_variant',
+          variantId,
+          'label',
+          variant.labelAr,
+          'ar',
         );
       }
     }
   }
 
-  console.log('Bakers menu seeded successfully');
-} 
+  console.log('Bakers menu seeded successfully with English and Arabic');
+}
