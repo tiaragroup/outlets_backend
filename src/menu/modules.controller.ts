@@ -30,9 +30,17 @@ export class ModulesController {
     return this.modulesService.findAll(lang);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number, @Query('lang') lang?: string) {
-    return this.modulesService.findOne(id, lang);
+  /**
+   * Supports both:
+   * GET /api/modules/2
+   * GET /api/modules/bakers-bakery
+   */
+  @Get(':idOrSlug')
+  findOne(
+    @Param('idOrSlug') idOrSlug: string,
+    @Query('lang') lang?: string,
+  ) {
+    return this.modulesService.findOneByIdOrSlug(idOrSlug, lang);
   }
 
   @UseGuards(JwtAuthGuard)

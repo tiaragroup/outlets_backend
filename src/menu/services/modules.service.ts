@@ -12,6 +12,7 @@ export class ModulesService {
   constructor(
     @InjectRepository(OutletModule)
     private readonly moduleRepository: Repository<OutletModule>,
+
     private readonly translationsService: TranslationsService,
   ) {}
 
@@ -49,6 +50,7 @@ export class ModulesService {
     });
 
     const ids = modules.map((item) => item.id);
+
     const translations = lang
       ? await this.translationsService.getTranslationByLang(
           TranslationModelType.MODULE,
@@ -82,28 +84,23 @@ export class ModulesService {
       throw new NotFoundException('Module not found');
     }
 
-    const translations = lang
-      ? await this.translationsService.getTranslationByLang(
-          TranslationModelType.MODULE,
-          [id],
-          lang,
-        )
-      : await this.translationsService.getTranslations(
-          TranslationModelType.MODULE,
-          [id],
-        );
+    return this.formatModuleResponse(module, lang);
+  }
 
-    return {
-      ...module,
-      translations: lang ? undefined : translations[id] || {},
-      ...(lang ? translations[id] || {} : {}),
-      colors: {
-        primary: module.primaryColor,
-        secondary: module.secondaryColor,
-        light: module.lightColor,
-        text: module.textColor,
-      },
-    };
+  async findOneByIdOrSlug(idOrSlug: string, lang?: string) {
+    const isNumericId = /^\d+$/.test(idOrSlug);
+
+    const module = await this.moduleRepository.findOne({
+      where: isNumericId
+        ? { id: Number(idOrSlug) }
+        : { slug: idOrSlug },
+    });
+
+    if (!module) {
+      throw new NotFoundException('Module not found');
+    }
+
+    return this.formatModuleResponse(module, lang);
   }
 
   async update(id: number, dto: UpdateModuleDto) {
@@ -121,7 +118,8 @@ export class ModulesService {
       logo: dto.logo ?? module.logo,
       coverImage: dto.coverImage ?? module.coverImage,
       authImage: dto.authImage ?? module.authImage,
-      primaryColor: dto.primaryColor ?? dto.colors?.primary ?? module.primaryColor,
+      primaryColor:
+        dto.primaryColor ?? dto.colors?.primary ?? module.primaryColor,
       secondaryColor:
         dto.secondaryColor ?? dto.colors?.secondary ?? module.secondaryColor,
       lightColor: dto.lightColor ?? dto.colors?.light ?? module.lightColor,
@@ -148,11 +146,40 @@ export class ModulesService {
     }
 
     await this.moduleRepository.delete(id);
-    await this.translationsService.deleteByModel(TranslationModelType.MODULE, id);
+
+    await this.translationsService.deleteByModel(
+      TranslationModelType.MODULE,
+      id,
+    );
 
     return {
       success: true,
       message: 'Module deleted successfully',
+    };
+  }
+
+  private async formatModuleResponse(module: OutletModule, lang?: string) {
+    const translations = lang
+      ? await this.translationsService.getTranslationByLang(
+          TranslationModelType.MODULE,
+          [module.id],
+          lang,
+        )
+      : await this.translationsService.getTranslations(
+          TranslationModelType.MODULE,
+          [module.id],
+        );
+
+    return {
+      ...module,
+      translations: lang ? undefined : translations[module.id] || {},
+      ...(lang ? translations[module.id] || {} : {}),
+      colors: {
+        primary: module.primaryColor,
+        secondary: module.secondaryColor,
+        light: module.lightColor,
+        text: module.textColor,
+      },
     };
   }
 }
