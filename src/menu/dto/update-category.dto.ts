@@ -1,9 +1,21 @@
-import { IsBoolean, IsInt, IsObject, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsInt,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateCategoryDto {
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   moduleId?: number;
+
+  @IsOptional()
+  @IsString()
+  moduleSlug?: string;
 
   @IsOptional()
   @IsString()
@@ -14,6 +26,7 @@ export class UpdateCategoryDto {
   image?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   priority?: number;
 

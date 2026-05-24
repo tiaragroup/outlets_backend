@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MenuCategory } from '../entities/menu-category.entity';
+import { OutletModule } from '../entities/module.entity';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
 import { TranslationsService } from './translations.service';
@@ -12,12 +17,18 @@ export class CategoriesService {
   constructor(
     @InjectRepository(MenuCategory)
     private readonly categoryRepository: Repository<MenuCategory>,
+
+    @InjectRepository(OutletModule)
+    private readonly moduleRepository: Repository<OutletModule>,
+
     private readonly translationsService: TranslationsService,
   ) {}
 
   async create(dto: CreateCategoryDto) {
+    const moduleId = await this.resolveModuleId(dto.moduleId, dto.moduleSlug);
+
     const category = this.categoryRepository.create({
-      moduleId: dto.moduleId,
+      moduleId,
       slug: dto.slug,
       image: dto.image,
       priority: dto.priority ?? 0,
@@ -45,6 +56,7 @@ export class CategoriesService {
     });
 
     const ids = categories.map((item) => item.id);
+
     const translations = lang
       ? await this.translationsService.getTranslationByLang(
           TranslationModelType.MENU_CATEGORY,
@@ -99,8 +111,14 @@ export class CategoriesService {
       throw new NotFoundException('Category not found');
     }
 
+    let moduleId = category.moduleId;
+
+    if (dto.moduleId || dto.moduleSlug) {
+      moduleId = await this.resolveModuleId(dto.moduleId, dto.moduleSlug);
+    }
+
     await this.categoryRepository.update(id, {
-      moduleId: dto.moduleId ?? category.moduleId,
+      moduleId,
       slug: dto.slug ?? category.slug,
       image: dto.image ?? category.image,
       priority: dto.priority ?? category.priority,
@@ -126,6 +144,7 @@ export class CategoriesService {
     }
 
     await this.categoryRepository.delete(id);
+
     await this.translationsService.deleteByModel(
       TranslationModelType.MENU_CATEGORY,
       id,
@@ -135,5 +154,33 @@ export class CategoriesService {
       success: true,
       message: 'Category deleted successfully',
     };
+  }
+
+  private async resolveModuleId(moduleId?: number, moduleSlug?: string) {
+    if (moduleId) {
+      const module = await this.moduleRepository.findOne({
+        where: { id: moduleId },
+      });
+
+      if (!module) {
+        throw new NotFoundException('Module not found');
+      }
+
+      return module.id;
+    }
+
+    if (moduleSlug) {
+      const module = await this.moduleRepository.findOne({
+        where: { slug: moduleSlug },
+      });
+
+      if (!module) {
+        throw new NotFoundException('Module not found');
+      }
+
+      return module.id;
+    }
+
+    throw new BadRequestException('moduleId or moduleSlug is required');
   }
 }
