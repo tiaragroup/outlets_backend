@@ -1,8 +1,22 @@
-import { IsBoolean, IsInt, IsObject, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsInt,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateCategoryDto {
+  @ValidateIf((o) => !o.moduleSlug)
+  @Type(() => Number)
   @IsInt()
-  moduleId: number;
+  moduleId?: number;
+
+  @ValidateIf((o) => !o.moduleId)
+  @IsString()
+  moduleSlug?: string;
 
   @IsString()
   slug: string;
@@ -12,6 +26,7 @@ export class CreateCategoryDto {
   image?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   priority?: number;
 
