@@ -13,6 +13,7 @@ export enum TranslationModelType {
   MENU_ITEM = 'menu_item',
   MENU_ITEM_VARIANT = 'menu_item_variant',
   MENU_ADDON = 'menu_addon',
+  SOCIAL_LINK = 'social_link',
 }
 
 @Entity('translations')
