@@ -16,6 +16,7 @@ export enum TranslationModelType {
   SOCIAL_LINK = 'social_link',
   GLOBAL_LOCATION = 'global_location',
   OUTLET_CONTACT = 'outlet_contact',
+  MODULE_LEGAL_CONTENT = 'module_legal_content',
 }
 
 @Entity('translations')

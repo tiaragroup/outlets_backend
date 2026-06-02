@@ -6,6 +6,7 @@ import { seedModules } from './seeders/modules.seeder';
 import { seedBakersMenu } from './seeders/bakers-menu.seeder';
 import { seedSocialLinks } from './seeders/social-links.seeder';
 import { seedContactLocation } from './seeders/contact-location.seeder';
+import { seedLegalContents } from './seeders/legal-contents.seeder';
 
 async function seed() {
   await dataSource.initialize();
@@ -57,7 +58,7 @@ async function seed() {
   await seedBakersMenu(dataSource);
   await seedSocialLinks(dataSource);
   await seedContactLocation(dataSource);
-
+  await seedLegalContents(dataSource);
   await dataSource.destroy();
 
   console.log('All seeders completed successfully');
