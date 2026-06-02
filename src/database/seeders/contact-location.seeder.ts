@@ -1,25 +1,73 @@
 import { DataSource } from 'typeorm';
 
-const globalLocation = {
-  address: 'Riyadh, Saudi Arabia',
-  city: 'Riyadh',
-  country: 'Saudi Arabia',
-  mapUrl: 'https://maps.google.com/?q=Riyadh%2C%20Saudi%20Arabia',
-  latitude: 24.7136,
-  longitude: 46.6753,
-  translations: {
-    en: {
-      address: 'Riyadh, Saudi Arabia',
-      city: 'Riyadh',
-      country: 'Saudi Arabia',
-    },
-    ar: {
-      address: 'الرياض، المملكة العربية السعودية',
-      city: 'الرياض',
-      country: 'المملكة العربية السعودية',
+const outletLocations = [
+  {
+    moduleSlug: 'bakers-bakery',
+    address: 'Bakers Bakery, Riyadh, Saudi Arabia',
+    city: 'Riyadh',
+    country: 'Saudi Arabia',
+    mapUrl:
+      'https://maps.google.com/?q=Bakers%20Bakery%20Riyadh%20Saudi%20Arabia',
+    latitude: 24.7136,
+    longitude: 46.6753,
+    translations: {
+      en: {
+        address: 'Bakers Bakery, Riyadh, Saudi Arabia',
+        city: 'Riyadh',
+        country: 'Saudi Arabia',
+      },
+      ar: {
+        address: 'بيكرز بيكري، الرياض، المملكة العربية السعودية',
+        city: 'الرياض',
+        country: 'المملكة العربية السعودية',
+      },
     },
   },
-};
+  {
+    moduleSlug: 'elements-du-chocolate',
+    address: 'Elements Du Chocolat, Riyadh, Saudi Arabia',
+    city: 'Riyadh',
+    country: 'Saudi Arabia',
+    mapUrl:
+      'https://maps.google.com/?q=Elements%20Du%20Chocolat%20Riyadh%20Saudi%20Arabia',
+    latitude: 24.7136,
+    longitude: 46.6753,
+    translations: {
+      en: {
+        address: 'Elements Du Chocolat, Riyadh, Saudi Arabia',
+        city: 'Riyadh',
+        country: 'Saudi Arabia',
+      },
+      ar: {
+        address: 'إليمنتس دو شوكولا، الرياض، المملكة العربية السعودية',
+        city: 'الرياض',
+        country: 'المملكة العربية السعودية',
+      },
+    },
+  },
+  {
+    moduleSlug: 'flower-scent',
+    address: 'Flower Scent, Riyadh, Saudi Arabia',
+    city: 'Riyadh',
+    country: 'Saudi Arabia',
+    mapUrl:
+      'https://maps.google.com/?q=Flower%20Scent%20Riyadh%20Saudi%20Arabia',
+    latitude: 24.7136,
+    longitude: 46.6753,
+    translations: {
+      en: {
+        address: 'Flower Scent, Riyadh, Saudi Arabia',
+        city: 'Riyadh',
+        country: 'Saudi Arabia',
+      },
+      ar: {
+        address: 'فلاور سنت، الرياض، المملكة العربية السعودية',
+        city: 'الرياض',
+        country: 'المملكة العربية السعودية',
+      },
+    },
+  },
+];
 
 const outletContacts = [
   {
@@ -111,90 +159,123 @@ async function upsertTranslation(
 
 export async function seedContactLocation(dataSource: DataSource) {
   /**
-   * Seed global location
+   * Disable old global location rows that are not connected to modules.
    */
-  const existingLocationRows = await dataSource.query(`
-    SELECT id
-    FROM global_locations
-    WHERE is_active = true
-    ORDER BY id ASC
-    LIMIT 1
+  await dataSource.query(`
+    UPDATE global_locations
+    SET is_active = false,
+        updated_at = now()
+    WHERE module_id IS NULL
   `);
 
-  let globalLocationId: number;
-
-  if (existingLocationRows.length) {
-    globalLocationId = Number(existingLocationRows[0].id);
-
-    await dataSource.query(
+  /**
+   * Seed module-based locations.
+   */
+  for (const location of outletLocations) {
+    const moduleRows = await dataSource.query(
       `
-      UPDATE global_locations
-      SET
-        address = $1,
-        city = $2,
-        country = $3,
-        map_url = $4,
-        latitude = $5,
-        longitude = $6,
-        is_active = true,
-        updated_at = now()
-      WHERE id = $7
+      SELECT id
+      FROM modules
+      WHERE slug = $1
+      LIMIT 1
       `,
-      [
-        globalLocation.address,
-        globalLocation.city,
-        globalLocation.country,
-        globalLocation.mapUrl,
-        globalLocation.latitude,
-        globalLocation.longitude,
-        globalLocationId,
-      ],
-    );
-  } else {
-    const insertedRows = await dataSource.query(
-      `
-      INSERT INTO global_locations (
-        address,
-        city,
-        country,
-        map_url,
-        latitude,
-        longitude,
-        is_active
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, true)
-      RETURNING id
-      `,
-      [
-        globalLocation.address,
-        globalLocation.city,
-        globalLocation.country,
-        globalLocation.mapUrl,
-        globalLocation.latitude,
-        globalLocation.longitude,
-      ],
+      [location.moduleSlug],
     );
 
-    globalLocationId = Number(insertedRows[0].id);
-  }
+    if (!moduleRows.length) {
+      console.warn(`Module not found for location: ${location.moduleSlug}`);
+      continue;
+    }
 
-  for (const langCode of Object.keys(globalLocation.translations)) {
-    const fields = globalLocation.translations[langCode];
+    const moduleId = Number(moduleRows[0].id);
 
-    for (const fieldName of Object.keys(fields)) {
-      await upsertTranslation(
-        dataSource,
-        'global_location',
-        globalLocationId,
-        fieldName,
-        fields[fieldName],
-        langCode,
+    const existingLocationRows = await dataSource.query(
+      `
+      SELECT id
+      FROM global_locations
+      WHERE module_id = $1
+      LIMIT 1
+      `,
+      [moduleId],
+    );
+
+    let locationId: number;
+
+    if (existingLocationRows.length) {
+      locationId = Number(existingLocationRows[0].id);
+
+      await dataSource.query(
+        `
+        UPDATE global_locations
+        SET
+          address = $1,
+          city = $2,
+          country = $3,
+          map_url = $4,
+          latitude = $5,
+          longitude = $6,
+          is_active = true,
+          updated_at = now()
+        WHERE id = $7
+        `,
+        [
+          location.address,
+          location.city,
+          location.country,
+          location.mapUrl,
+          location.latitude,
+          location.longitude,
+          locationId,
+        ],
       );
+    } else {
+      const insertedRows = await dataSource.query(
+        `
+        INSERT INTO global_locations (
+          module_id,
+          address,
+          city,
+          country,
+          map_url,
+          latitude,
+          longitude,
+          is_active
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, true)
+        RETURNING id
+        `,
+        [
+          moduleId,
+          location.address,
+          location.city,
+          location.country,
+          location.mapUrl,
+          location.latitude,
+          location.longitude,
+        ],
+      );
+
+      locationId = Number(insertedRows[0].id);
+    }
+
+    for (const langCode of Object.keys(location.translations)) {
+      const fields = location.translations[langCode];
+
+      for (const fieldName of Object.keys(fields)) {
+        await upsertTranslation(
+          dataSource,
+          'global_location',
+          locationId,
+          fieldName,
+          fields[fieldName],
+          langCode,
+        );
+      }
     }
   }
 
   /**
-   * Seed outlet contacts
+   * Seed outlet contacts.
    */
   for (const contact of outletContacts) {
     let moduleId: number | null = null;
@@ -293,5 +374,5 @@ export async function seedContactLocation(dataSource: DataSource) {
     );
   }
 
-  console.log('Contact and global location seeded successfully');
+  console.log('Contact and module-based locations seeded successfully');
 }

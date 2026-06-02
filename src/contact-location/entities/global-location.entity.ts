@@ -2,12 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { OutletModule } from '../../menu/entities/module.entity';
 
 const numberTransformer = {
-  to: (value: number) => value,
+  to: (value: number | null) => value,
   from: (value: string | null) => (value === null ? null : Number(value)),
 };
 
@@ -16,17 +19,48 @@ export class GlobalLocation {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ nullable: true, length: 500 })
-  address: string;
+  @Column({
+    name: 'module_id',
+    type: 'bigint',
+    nullable: true,
+  })
+  moduleId: number | null;
 
-  @Column({ nullable: true, length: 150 })
-  city: string;
+  @ManyToOne(() => OutletModule, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'module_id' })
+  module: OutletModule | null;
 
-  @Column({ nullable: true, length: 150 })
-  country: string;
+  @Column({
+    type: 'varchar',
+    length: 500,
+    nullable: true,
+  })
+  address: string | null;
 
-  @Column({ name: 'map_url', nullable: true, length: 1000 })
-  mapUrl: string;
+  @Column({
+    type: 'varchar',
+    length: 150,
+    nullable: true,
+  })
+  city: string | null;
+
+  @Column({
+    type: 'varchar',
+    length: 150,
+    nullable: true,
+  })
+  country: string | null;
+
+  @Column({
+    name: 'map_url',
+    type: 'varchar',
+    length: 1000,
+    nullable: true,
+  })
+  mapUrl: string | null;
 
   @Column({
     type: 'numeric',
@@ -35,7 +69,7 @@ export class GlobalLocation {
     nullable: true,
     transformer: numberTransformer,
   })
-  latitude: number;
+  latitude: number | null;
 
   @Column({
     type: 'numeric',
@@ -44,14 +78,24 @@ export class GlobalLocation {
     nullable: true,
     transformer: numberTransformer,
   })
-  longitude: number;
+  longitude: number | null;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({
+    name: 'is_active',
+    type: 'boolean',
+    default: true,
+  })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamptz',
+  })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamptz',
+  })
   updatedAt: Date;
 }

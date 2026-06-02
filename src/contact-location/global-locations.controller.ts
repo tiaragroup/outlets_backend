@@ -26,8 +26,24 @@ export class GlobalLocationsController {
   }
 
   @Get()
-  findAll(@Query('lang') lang?: string) {
-    return this.globalLocationsService.findAll(lang);
+  findAll(
+    @Query('lang') lang?: string,
+    @Query('moduleSlug') moduleSlug?: string,
+    @Query('moduleId') moduleId?: string,
+  ) {
+    return this.globalLocationsService.findAll(
+      lang,
+      moduleSlug,
+      moduleId ? Number(moduleId) : undefined,
+    );
+  }
+
+  @Get('by-module/:moduleSlug')
+  findByModuleSlug(
+    @Param('moduleSlug') moduleSlug: string,
+    @Query('lang') lang?: string,
+  ) {
+    return this.globalLocationsService.findByModuleSlug(moduleSlug, lang);
   }
 
   @Get(':id')

@@ -1,5 +1,7 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsInt,
   IsNumber,
   IsObject,
   IsOptional,
@@ -7,6 +9,15 @@ import {
 } from 'class-validator';
 
 export class UpdateGlobalLocationDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  moduleId?: number;
+
+  @IsOptional()
+  @IsString()
+  moduleSlug?: string;
+
   @IsOptional()
   @IsString()
   address?: string;
@@ -24,10 +35,12 @@ export class UpdateGlobalLocationDto {
   mapUrl?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   latitude?: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   longitude?: number;
 

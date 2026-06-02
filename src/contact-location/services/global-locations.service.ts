@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GlobalLocation } from '../entities/global-location.entity';
+import { OutletModule } from '../../menu/entities/module.entity';
 import { CreateGlobalLocationDto } from '../dto/create-global-location.dto';
 import { UpdateGlobalLocationDto } from '../dto/update-global-location.dto';
 import { TranslationsService } from '../../menu/services/translations.service';
@@ -13,17 +18,23 @@ export class GlobalLocationsService {
     @InjectRepository(GlobalLocation)
     private readonly globalLocationRepository: Repository<GlobalLocation>,
 
+    @InjectRepository(OutletModule)
+    private readonly moduleRepository: Repository<OutletModule>,
+
     private readonly translationsService: TranslationsService,
   ) {}
 
   async create(dto: CreateGlobalLocationDto) {
+    const moduleId = await this.resolveModuleId(dto.moduleId, dto.moduleSlug);
+
     const location = this.globalLocationRepository.create({
-      address: dto.address,
-      city: dto.city,
-      country: dto.country,
-      mapUrl: dto.mapUrl,
-      latitude: dto.latitude,
-      longitude: dto.longitude,
+      moduleId,
+      address: dto.address ?? null,
+      city: dto.city ?? null,
+      country: dto.country ?? null,
+      mapUrl: dto.mapUrl ?? null,
+      latitude: dto.latitude ?? null,
+      longitude: dto.longitude ?? null,
       isActive: dto.isActive ?? true,
     });
 
@@ -38,8 +49,28 @@ export class GlobalLocationsService {
     return this.findOne(saved.id);
   }
 
-  async findAll(lang?: string) {
+  async findAll(lang?: string, moduleSlug?: string, moduleId?: number) {
+    const where: any = {};
+
+    if (moduleSlug) {
+      const module = await this.moduleRepository.findOne({
+        where: { slug: moduleSlug },
+      });
+
+      if (!module) {
+        throw new NotFoundException('Module not found');
+      }
+
+      where.moduleId = module.id;
+    } else if (moduleId) {
+      where.moduleId = moduleId;
+    }
+
     const locations = await this.globalLocationRepository.find({
+      where,
+      relations: {
+        module: true,
+      },
       order: {
         id: 'ASC',
       },
@@ -66,6 +97,9 @@ export class GlobalLocationsService {
   async findOne(id: number, lang?: string) {
     const location = await this.globalLocationRepository.findOne({
       where: { id },
+      relations: {
+        module: true,
+      },
     });
 
     if (!location) {
@@ -86,6 +120,31 @@ export class GlobalLocationsService {
     return this.formatLocationResponse(location, translations, lang);
   }
 
+  async findByModuleSlug(moduleSlug: string, lang?: string) {
+    const module = await this.moduleRepository.findOne({
+      where: { slug: moduleSlug },
+    });
+
+    if (!module) {
+      throw new NotFoundException('Module not found');
+    }
+
+    const location = await this.globalLocationRepository.findOne({
+      where: {
+        moduleId: module.id,
+      },
+      relations: {
+        module: true,
+      },
+    });
+
+    if (!location) {
+      throw new NotFoundException('Global location not found');
+    }
+
+    return this.findOne(location.id, lang);
+  }
+
   async update(id: number, dto: UpdateGlobalLocationDto) {
     const location = await this.globalLocationRepository.findOne({
       where: { id },
@@ -95,7 +154,13 @@ export class GlobalLocationsService {
       throw new NotFoundException('Global location not found');
     }
 
+    const moduleId =
+      dto.moduleId || dto.moduleSlug
+        ? await this.resolveModuleId(dto.moduleId, dto.moduleSlug)
+        : location.moduleId;
+
     await this.globalLocationRepository.update(id, {
+      moduleId,
       address: dto.address ?? location.address,
       city: dto.city ?? location.city,
       country: dto.country ?? location.country,
@@ -140,6 +205,37 @@ export class GlobalLocationsService {
     };
   }
 
+  private async resolveModuleId(
+    moduleId?: number,
+    moduleSlug?: string,
+  ): Promise<number> {
+    if (moduleId) {
+      const module = await this.moduleRepository.findOne({
+        where: { id: moduleId },
+      });
+
+      if (!module) {
+        throw new NotFoundException('Module not found');
+      }
+
+      return module.id;
+    }
+
+    if (moduleSlug) {
+      const module = await this.moduleRepository.findOne({
+        where: { slug: moduleSlug },
+      });
+
+      if (!module) {
+        throw new NotFoundException('Module not found');
+      }
+
+      return module.id;
+    }
+
+    throw new BadRequestException('moduleId or moduleSlug is required');
+  }
+
   private withDefaultTranslations(
     location: GlobalLocation,
     translations?: Record<string, Record<string, string>>,
@@ -148,9 +244,9 @@ export class GlobalLocationsService {
       ...(translations || {}),
       en: {
         ...(translations?.en || {}),
-        address: translations?.en?.address || location.address,
-        city: translations?.en?.city || location.city,
-        country: translations?.en?.country || location.country,
+        address: translations?.en?.address || location.address || '',
+        city: translations?.en?.city || location.city || '',
+        country: translations?.en?.country || location.country || '',
       },
     };
   }
@@ -164,6 +260,12 @@ export class GlobalLocationsService {
 
     return {
       ...location,
+      module: location.module
+        ? {
+            id: location.module.id,
+            slug: location.module.slug,
+          }
+        : null,
       translations: lang ? undefined : locationTranslations,
       ...(lang
         ? {
