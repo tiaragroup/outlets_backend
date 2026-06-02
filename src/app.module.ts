@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MenuModule } from './menu/menu.module';
 import { SocialLinksModule } from './social-links/social-links.module';
+import { ContactLocationModule } from './contact-location/contact-location.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { SocialLinksModule } from './social-links/social-links.module';
     AuthModule,
     MenuModule,
     SocialLinksModule,
+    ContactLocationModule,
   ],
 })
 export class AppModule {}

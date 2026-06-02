@@ -5,6 +5,7 @@ import { User, UserRole } from '../users/entities/user.entity';
 import { seedModules } from './seeders/modules.seeder';
 import { seedBakersMenu } from './seeders/bakers-menu.seeder';
 import { seedSocialLinks } from './seeders/social-links.seeder';
+import { seedContactLocation } from './seeders/contact-location.seeder';
 
 async function seed() {
   await dataSource.initialize();
@@ -55,6 +56,7 @@ async function seed() {
   await seedModules(dataSource);
   await seedBakersMenu(dataSource);
   await seedSocialLinks(dataSource);
+  await seedContactLocation(dataSource);
 
   await dataSource.destroy();
 

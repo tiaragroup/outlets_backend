@@ -14,6 +14,8 @@ export enum TranslationModelType {
   MENU_ITEM_VARIANT = 'menu_item_variant',
   MENU_ADDON = 'menu_addon',
   SOCIAL_LINK = 'social_link',
+  GLOBAL_LOCATION = 'global_location',
+  OUTLET_CONTACT = 'outlet_contact',
 }
 
 @Entity('translations')
