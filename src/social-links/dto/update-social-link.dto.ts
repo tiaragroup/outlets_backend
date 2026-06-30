@@ -1,6 +1,22 @@
-import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsInt,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateSocialLinkDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  moduleId?: number;
+
+  @IsOptional()
+  @IsString()
+  moduleSlug?: string;
+
   @IsOptional()
   @IsString()
   name?: string;

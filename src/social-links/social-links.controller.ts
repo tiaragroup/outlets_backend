@@ -26,8 +26,24 @@ export class SocialLinksController {
   }
 
   @Get()
-  findAll(@Query('lang') lang?: string) {
-    return this.socialLinksService.findAll(lang);
+  findAll(
+    @Query('lang') lang?: string,
+    @Query('moduleSlug') moduleSlug?: string,
+    @Query('moduleId') moduleId?: string,
+  ) {
+    return this.socialLinksService.findAll(
+      lang,
+      moduleSlug,
+      moduleId ? Number(moduleId) : undefined,
+    );
+  }
+
+  @Get('by-module/:moduleSlug')
+  findByModuleSlug(
+    @Param('moduleSlug') moduleSlug: string,
+    @Query('lang') lang?: string,
+  ) {
+    return this.socialLinksService.findByModuleSlug(moduleSlug, lang);
   }
 
   @Get(':id')
