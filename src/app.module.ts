@@ -7,6 +7,7 @@ import { MenuModule } from './menu/menu.module';
 import { SocialLinksModule } from './social-links/social-links.module';
 import { ContactLocationModule } from './contact-location/contact-location.module';
 import { LegalContentsModule } from './legal-contents/legal-contents.module';
+import { SlidersModule } from './sliders/sliders.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { LegalContentsModule } from './legal-contents/legal-contents.module';
     SocialLinksModule,
     ContactLocationModule,
     LegalContentsModule,
+    SlidersModule
   ],
 })
 export class AppModule {}
