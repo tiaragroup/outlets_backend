@@ -23,15 +23,23 @@ export class UpdateOutletContactDto {
 
   @IsOptional()
   @IsString()
-  phone?: string;
+  phone?: string | null;
 
   @IsOptional()
   @IsString()
-  email?: string;
+  whatsappNumber?: string | null;
 
   @IsOptional()
   @IsString()
-  websiteUrl?: string;
+  whatsappUrl?: string | null;
+
+  @IsOptional()
+  @IsString()
+  email?: string | null;
+
+  @IsOptional()
+  @IsString()
+  websiteUrl?: string | null;
 
   @IsOptional()
   @IsBoolean()

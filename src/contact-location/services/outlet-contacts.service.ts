@@ -27,6 +27,8 @@ export class OutletContactsService {
       moduleId,
       name: dto.name,
       phone: dto.phone ?? null,
+      whatsappNumber: dto.whatsappNumber ?? null,
+      whatsappUrl: dto.whatsappUrl ?? null,
       email: dto.email ?? null,
       websiteUrl: dto.websiteUrl ?? null,
       isActive: dto.isActive ?? true,
@@ -149,12 +151,47 @@ export class OutletContactsService {
         ? await this.resolveModuleId(dto.moduleId, dto.moduleSlug)
         : contact.moduleId;
 
+    const hasPhoneField = Object.prototype.hasOwnProperty.call(dto, 'phone');
+
+    const hasWhatsappNumberField = Object.prototype.hasOwnProperty.call(
+      dto,
+      'whatsappNumber',
+    );
+
+    const hasWhatsappUrlField = Object.prototype.hasOwnProperty.call(
+      dto,
+      'whatsappUrl',
+    );
+
+    const hasEmailField = Object.prototype.hasOwnProperty.call(dto, 'email');
+
+    const hasWebsiteUrlField = Object.prototype.hasOwnProperty.call(
+      dto,
+      'websiteUrl',
+    );
+
     await this.outletContactRepository.update(id, {
       moduleId,
       name: dto.name ?? contact.name,
-      phone: dto.phone ?? contact.phone,
-      email: dto.email ?? contact.email,
-      websiteUrl: dto.websiteUrl ?? contact.websiteUrl,
+
+      // missing field = keep old value
+      // null = remove value
+      phone: hasPhoneField ? dto.phone ?? null : contact.phone,
+
+      whatsappNumber: hasWhatsappNumberField
+        ? dto.whatsappNumber ?? null
+        : contact.whatsappNumber,
+
+      whatsappUrl: hasWhatsappUrlField
+        ? dto.whatsappUrl ?? null
+        : contact.whatsappUrl,
+
+      email: hasEmailField ? dto.email ?? null : contact.email,
+
+      websiteUrl: hasWebsiteUrlField
+        ? dto.websiteUrl ?? null
+        : contact.websiteUrl,
+
       isActive: dto.isActive ?? contact.isActive,
     });
 

@@ -42,6 +42,22 @@ export class OutletContact {
   phone: string | null;
 
   @Column({
+    name: 'whatsapp_number',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  whatsappNumber: string | null;
+
+  @Column({
+    name: 'whatsapp_url',
+    type: 'varchar',
+    length: 500,
+    nullable: true,
+  })
+  whatsappUrl: string | null;
+
+  @Column({
     type: 'varchar',
     length: 180,
     nullable: true,
