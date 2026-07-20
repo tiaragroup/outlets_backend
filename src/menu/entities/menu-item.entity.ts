@@ -36,11 +36,19 @@ export class MenuItem {
   @JoinColumn({ name: 'category_id' })
   category: MenuCategory;
 
-  @Column({ nullable: true, length: 150 })
-  slug: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    length: 150,
+  })
+  slug: string | null;
 
-  @Column({ nullable: true, length: 500 })
-  image: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    length: 500,
+  })
+  image: string | null;
 
   @Column({ default: 0 })
   priority: number;

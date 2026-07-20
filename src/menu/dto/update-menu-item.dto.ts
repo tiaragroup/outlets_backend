@@ -27,8 +27,9 @@ export class UpdateMenuItemVariantDto {
   @IsBoolean()
   isActive?: boolean;
 
+  @IsOptional()
   @IsObject()
-  translations: Record<string, Record<string, string>>;
+  translations?: Record<string, Record<string, string>>;
 }
 
 export class UpdateMenuItemDto {
@@ -44,9 +45,15 @@ export class UpdateMenuItemDto {
   @IsString()
   slug?: string;
 
+  /**
+   * Send image as:
+   * - string => update image path
+   * - null => remove image path
+   * - undefined / missing => keep old image path
+   */
   @IsOptional()
   @IsString()
-  image?: string;
+  image?: string | null;
 
   @IsOptional()
   @IsInt()

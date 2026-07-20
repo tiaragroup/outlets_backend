@@ -49,7 +49,7 @@ export class MenuItemsService {
         moduleId: dto.moduleId ?? category.moduleId,
         categoryId: dto.categoryId,
         slug: dto.slug,
-        image: dto.image,
+        image: dto.image ?? null,
         priority: dto.priority ?? 0,
         isActive: dto.isActive ?? true,
       });
@@ -239,11 +239,19 @@ export class MenuItemsService {
         moduleId = dto.moduleId ?? category.moduleId;
       }
 
+      /**
+       * Important:
+       * - image missing from body => keep old image
+       * - image string => update image
+       * - image null => remove image
+       */
+      const hasImageField = Object.prototype.hasOwnProperty.call(dto, 'image');
+
       await manager.getRepository(MenuItem).update(id, {
         moduleId,
         categoryId: dto.categoryId ?? item.categoryId,
         slug: dto.slug ?? item.slug,
-        image: dto.image ?? item.image,
+        image: hasImageField ? dto.image ?? null : item.image,
         priority: dto.priority ?? item.priority,
         isActive: dto.isActive ?? item.isActive,
       });
@@ -265,6 +273,27 @@ export class MenuItemsService {
     });
 
     return this.findOne(id);
+  }
+
+  async removeImage(id: number) {
+    const item = await this.menuItemRepository.findOne({
+      where: { id },
+    });
+
+    if (!item) {
+      throw new NotFoundException('Menu item not found');
+    }
+
+    await this.menuItemRepository.update(id, {
+      image: null,
+    });
+
+    return {
+      success: true,
+      message: 'Menu item image removed successfully',
+      id,
+      image: null,
+    };
   }
 
   async remove(id: number) {
