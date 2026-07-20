@@ -20,6 +20,7 @@
 
     "seed:social-links": "ts-node -r tsconfig-paths/register src/database/seed-social-links.ts",
     "seed:sliders": "ts-node -r tsconfig-paths/register src/database/seed-sliders.ts",
+    "seed:whatsapp-social-links": "ts-node -r tsconfig-paths/register src/database/seed-whatsapp-social-links.ts",
 
     "test": "jest",
     "test:watch": "jest --watch",
