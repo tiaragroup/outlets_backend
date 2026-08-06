@@ -8,6 +8,7 @@ import { SocialLinksModule } from './social-links/social-links.module';
 import { ContactLocationModule } from './contact-location/contact-location.module';
 import { LegalContentsModule } from './legal-contents/legal-contents.module';
 import { SlidersModule } from './sliders/sliders.module';
+import { HeroSectionsModule } from './hero-sections/hero-sections.module';
 
 @Module({
   imports: [
@@ -51,7 +52,8 @@ import { SlidersModule } from './sliders/sliders.module';
     SocialLinksModule,
     ContactLocationModule,
     LegalContentsModule,
-    SlidersModule
+    SlidersModule,
+    HeroSectionsModule
   ],
 })
 export class AppModule {}
