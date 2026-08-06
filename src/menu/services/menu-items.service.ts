@@ -51,6 +51,7 @@ export class MenuItemsService {
         slug: dto.slug,
         image: dto.image ?? null,
         priority: dto.priority ?? 0,
+        sellerPriority: dto.sellerPriority ?? 0,
         isActive: dto.isActive ?? true,
       });
 
@@ -253,6 +254,7 @@ export class MenuItemsService {
         slug: dto.slug ?? item.slug,
         image: hasImageField ? dto.image ?? null : item.image,
         priority: dto.priority ?? item.priority,
+        sellerPriority: dto.sellerPriority ?? item.sellerPriority,
         isActive: dto.isActive ?? item.isActive,
       });
 

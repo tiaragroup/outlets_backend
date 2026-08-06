@@ -52,6 +52,10 @@ export class CreateMenuItemDto {
   priority?: number;
 
   @IsOptional()
+  @IsInt()
+  sellerPriority?: number;
+
+  @IsOptional()
   @IsBoolean()
   isActive?: boolean;
 

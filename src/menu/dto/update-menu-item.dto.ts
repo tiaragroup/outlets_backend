@@ -60,6 +60,10 @@ export class UpdateMenuItemDto {
   priority?: number;
 
   @IsOptional()
+  @IsInt()
+  sellerPriority?: number;
+
+  @IsOptional()
   @IsBoolean()
   isActive?: boolean;
 

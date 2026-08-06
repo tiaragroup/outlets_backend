@@ -53,6 +53,9 @@ export class MenuItem {
   @Column({ default: 0 })
   priority: number;
 
+  @Column({ name: 'seller_priority', default: 0 })
+  sellerPriority: number;
+
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
