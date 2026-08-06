@@ -9,6 +9,7 @@ import { ContactLocationModule } from './contact-location/contact-location.modul
 import { LegalContentsModule } from './legal-contents/legal-contents.module';
 import { SlidersModule } from './sliders/sliders.module';
 import { HeroSectionsModule } from './hero-sections/hero-sections.module';
+import { GalleriesModule } from './galleries/galleries.module';
 
 @Module({
   imports: [
@@ -53,7 +54,8 @@ import { HeroSectionsModule } from './hero-sections/hero-sections.module';
     ContactLocationModule,
     LegalContentsModule,
     SlidersModule,
-    HeroSectionsModule
+    HeroSectionsModule,
+    GalleriesModule,
   ],
 })
 export class AppModule {}
