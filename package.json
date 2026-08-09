@@ -23,6 +23,7 @@
     "seed:whatsapp-social-links": "ts-node -r tsconfig-paths/register src/database/seed-whatsapp-social-links.ts",
     "seed:hero-sections": "ts-node -r tsconfig-paths/register src/database/seed-hero-sections.ts",
     "seed:story-sections": "ts-node -r tsconfig-paths/register src/database/seed-story-sections.ts",
+    "seed:why-choose-us": "ts-node -r tsconfig-paths/register src/database/seed-why-choose-us.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

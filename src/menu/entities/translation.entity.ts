@@ -21,6 +21,8 @@ export enum TranslationModelType {
   MODULE_HERO_SECTION = 'module_hero_section',
   MODULE_STORY_SECTION = 'module_story_section',
   MODULE_STORY_STAT = 'module_story_stat',
+  MODULE_WHY_CHOOSE_US_SECTION = 'module_why_choose_us_section',
+  MODULE_WHY_CHOOSE_US_FEATURE = 'module_why_choose_us_feature',
 }
 
 @Entity('translations')
