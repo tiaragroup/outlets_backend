@@ -22,6 +22,7 @@
     "seed:sliders": "ts-node -r tsconfig-paths/register src/database/seed-sliders.ts",
     "seed:whatsapp-social-links": "ts-node -r tsconfig-paths/register src/database/seed-whatsapp-social-links.ts",
     "seed:hero-sections": "ts-node -r tsconfig-paths/register src/database/seed-hero-sections.ts",
+    "seed:story-sections": "ts-node -r tsconfig-paths/register src/database/seed-story-sections.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
