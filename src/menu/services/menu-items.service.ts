@@ -121,6 +121,65 @@ export class MenuItemsService {
     return this.attachTranslations(items, lang);
   }
 
+  /**
+   * Top selling items of a module.
+   * Ranked by seller priority first, then newest created.
+   * When every item is still on 0 they all tie, so the list
+   * naturally falls back to newest first.
+   */
+  async findTopSellers(
+    moduleSlug?: string,
+    moduleId?: number,
+    lang?: string,
+    limit = 8,
+  ) {
+    let resolvedModuleId: number;
+
+    if (moduleSlug) {
+      const module = await this.moduleRepository.findOne({
+        where: { slug: moduleSlug },
+      });
+
+      if (!module) {
+        throw new NotFoundException('Module not found');
+      }
+
+      resolvedModuleId = module.id;
+    } else if (moduleId) {
+      resolvedModuleId = moduleId;
+    } else {
+      throw new BadRequestException('moduleId or moduleSlug is required');
+    }
+
+    const safeLimit = Math.min(Math.max(limit, 1), 50);
+
+    const items = await this.menuItemRepository.find({
+      where: {
+        moduleId: resolvedModuleId,
+        isActive: true,
+      },
+      relations: {
+        category: true,
+        variants: true,
+        itemAddons: {
+          addon: true,
+        },
+      },
+      order: {
+        sellerPriority: 'DESC',
+        createdAt: 'DESC',
+        id: 'DESC',
+        variants: {
+          priority: 'ASC',
+          id: 'ASC',
+        },
+      },
+      take: safeLimit,
+    });
+
+    return this.attachTranslations(items, lang);
+  }
+
   async findByCategorySlug(
     categorySlug: string,
     moduleSlug: string,
@@ -252,7 +311,7 @@ export class MenuItemsService {
         moduleId,
         categoryId: dto.categoryId ?? item.categoryId,
         slug: dto.slug ?? item.slug,
-        image: hasImageField ? dto.image ?? null : item.image,
+        image: hasImageField ? (dto.image ?? null) : item.image,
         priority: dto.priority ?? item.priority,
         sellerPriority: dto.sellerPriority ?? item.sellerPriority,
         isActive: dto.isActive ?? item.isActive,
@@ -483,7 +542,9 @@ export class MenuItemsService {
       variants:
         item.variants?.map((variant) => ({
           ...variant,
-          translations: lang ? undefined : variantTranslations[variant.id] || {},
+          translations: lang
+            ? undefined
+            : variantTranslations[variant.id] || {},
           ...(lang ? variantTranslations[variant.id] || {} : {}),
         })) || [],
 

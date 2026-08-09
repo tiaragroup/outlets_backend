@@ -40,6 +40,21 @@ export class MenuItemsController {
     );
   }
 
+  @Get('top-sellers')
+  findTopSellers(
+    @Query('moduleSlug') moduleSlug?: string,
+    @Query('moduleId') moduleId?: string,
+    @Query('lang') lang?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.menuItemsService.findTopSellers(
+      moduleSlug,
+      moduleId ? Number(moduleId) : undefined,
+      lang,
+      limit ? Number(limit) : undefined,
+    );
+  }
+
   @Get('by-category/:categorySlug')
   findByCategorySlug(
     @Param('categorySlug') categorySlug: string,
@@ -60,7 +75,10 @@ export class MenuItemsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateMenuItemDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateMenuItemDto,
+  ) {
     return this.menuItemsService.update(id, dto);
   }
 
