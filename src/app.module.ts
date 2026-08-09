@@ -12,6 +12,7 @@ import { HeroSectionsModule } from './hero-sections/hero-sections.module';
 import { GalleriesModule } from './galleries/galleries.module';
 import { StorySectionsModule } from './story-sections/story-sections.module';
 import { WhyChooseUsModule } from './why-choose-us/why-choose-us.module';
+import { PromotionsModule } from './promotions/promotions.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { WhyChooseUsModule } from './why-choose-us/why-choose-us.module';
     GalleriesModule,
     StorySectionsModule,
     WhyChooseUsModule,
+    PromotionsModule,
   ],
 })
 export class AppModule {}

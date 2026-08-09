@@ -24,6 +24,7 @@
     "seed:hero-sections": "ts-node -r tsconfig-paths/register src/database/seed-hero-sections.ts",
     "seed:story-sections": "ts-node -r tsconfig-paths/register src/database/seed-story-sections.ts",
     "seed:why-choose-us": "ts-node -r tsconfig-paths/register src/database/seed-why-choose-us.ts",
+    "seed:promotions": "ts-node -r tsconfig-paths/register src/database/seed-promotions.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
