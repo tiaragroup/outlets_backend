@@ -12,6 +12,7 @@ import { OutletModule } from './module.entity';
 import { MenuCategory } from './menu-category.entity';
 import { MenuItemVariant } from './menu-item-variant.entity';
 import { MenuItemAddon } from './menu-item-addon.entity';
+import { MenuItemImage } from './menu-item-image.entity';
 
 @Entity('menu_items')
 export class MenuItem {
@@ -64,6 +65,13 @@ export class MenuItem {
 
   @OneToMany(() => MenuItemAddon, (itemAddon) => itemAddon.menuItem)
   itemAddons: MenuItemAddon[];
+
+  /**
+   * Extra gallery images. The single `image` column above stays the
+   * main/cover image and is untouched by this relation.
+   */
+  @OneToMany(() => MenuItemImage, (itemImage) => itemImage.menuItem)
+  images: MenuItemImage[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

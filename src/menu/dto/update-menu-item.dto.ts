@@ -32,6 +32,19 @@ export class UpdateMenuItemVariantDto {
   translations?: Record<string, Record<string, string>>;
 }
 
+export class UpdateMenuItemImageDto {
+  @IsString()
+  image: string;
+
+  @IsOptional()
+  @IsInt()
+  priority?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+}
+
 export class UpdateMenuItemDto {
   @IsOptional()
   @IsInt()
@@ -81,4 +94,15 @@ export class UpdateMenuItemDto {
   @IsArray()
   @IsInt({ each: true })
   addonIds?: number[];
+
+  /**
+   * Send images as:
+   * - array => replace the whole gallery ([] clears it)
+   * - undefined / missing => keep existing gallery
+   */
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateMenuItemImageDto)
+  images?: UpdateMenuItemImageDto[];
 }

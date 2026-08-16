@@ -6,6 +6,7 @@ import { MenuItem } from './entities/menu-item.entity';
 import { MenuItemVariant } from './entities/menu-item-variant.entity';
 import { MenuAddon } from './entities/menu-addon.entity';
 import { MenuItemAddon } from './entities/menu-item-addon.entity';
+import { MenuItemImage } from './entities/menu-item-image.entity';
 import { Translation } from './entities/translation.entity';
 import { ModulesController } from './modules.controller';
 import { CategoriesController } from './categories.controller';
@@ -28,6 +29,7 @@ import { PublicMenuService } from './services/public-menu.service';
       MenuItemVariant,
       MenuAddon,
       MenuItemAddon,
+      MenuItemImage,
       Translation,
     ]),
   ],

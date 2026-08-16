@@ -10,6 +10,7 @@ import { MenuItem } from '../entities/menu-item.entity';
 import { MenuCategory } from '../entities/menu-category.entity';
 import { MenuItemVariant } from '../entities/menu-item-variant.entity';
 import { MenuItemAddon } from '../entities/menu-item-addon.entity';
+import { MenuItemImage } from '../entities/menu-item-image.entity';
 import { CreateMenuItemDto } from '../dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from '../dto/update-menu-item.dto';
 import { TranslationsService } from './translations.service';
@@ -66,6 +67,7 @@ export class MenuItemsService {
 
       await this.replaceVariants(manager, saved.id, dto.variants || []);
       await this.replaceAddons(manager, saved.id, dto.addonIds || []);
+      await this.replaceImages(manager, saved.id, dto.images || []);
 
       return saved.id;
     });
@@ -104,6 +106,7 @@ export class MenuItemsService {
       relations: {
         category: true,
         variants: true,
+        images: true,
         itemAddons: {
           addon: true,
         },
@@ -112,6 +115,10 @@ export class MenuItemsService {
         priority: 'ASC',
         id: 'ASC',
         variants: {
+          priority: 'ASC',
+          id: 'ASC',
+        },
+        images: {
           priority: 'ASC',
           id: 'ASC',
         },
@@ -161,6 +168,7 @@ export class MenuItemsService {
       relations: {
         category: true,
         variants: true,
+        images: true,
         itemAddons: {
           addon: true,
         },
@@ -170,6 +178,10 @@ export class MenuItemsService {
         createdAt: 'DESC',
         id: 'DESC',
         variants: {
+          priority: 'ASC',
+          id: 'ASC',
+        },
+        images: {
           priority: 'ASC',
           id: 'ASC',
         },
@@ -207,6 +219,7 @@ export class MenuItemsService {
       relations: {
         category: true,
         variants: true,
+        images: true,
         itemAddons: {
           addon: true,
         },
@@ -215,6 +228,10 @@ export class MenuItemsService {
         priority: 'ASC',
         id: 'ASC',
         variants: {
+          priority: 'ASC',
+          id: 'ASC',
+        },
+        images: {
           priority: 'ASC',
           id: 'ASC',
         },
@@ -254,12 +271,17 @@ export class MenuItemsService {
       relations: {
         category: true,
         variants: true,
+        images: true,
         itemAddons: {
           addon: true,
         },
       },
       order: {
         variants: {
+          priority: 'ASC',
+          id: 'ASC',
+        },
+        images: {
           priority: 'ASC',
           id: 'ASC',
         },
@@ -330,6 +352,15 @@ export class MenuItemsService {
 
       if (dto.addonIds) {
         await this.replaceAddons(manager, id, dto.addonIds);
+      }
+
+      /**
+       * Important:
+       * - images missing from body => keep existing gallery
+       * - images array => replace gallery ([] clears it)
+       */
+      if (dto.images) {
+        await this.replaceImages(manager, id, dto.images);
       }
     });
 
@@ -455,6 +486,29 @@ export class MenuItemsService {
     }
   }
 
+  private async replaceImages(
+    manager: EntityManager,
+    menuItemId: number,
+    images: { image: string; priority?: number; isActive?: boolean }[],
+  ) {
+    const imageRepo = manager.getRepository(MenuItemImage);
+
+    await imageRepo.delete({
+      menuItemId,
+    });
+
+    for (const [index, imageDto] of images.entries()) {
+      await imageRepo.save(
+        imageRepo.create({
+          menuItemId,
+          image: imageDto.image,
+          priority: imageDto.priority ?? index,
+          isActive: imageDto.isActive ?? true,
+        }),
+      );
+    }
+  }
+
   private async attachTranslations(items: MenuItem[], lang?: string) {
     const itemIds = items.map((item) => item.id);
 
@@ -538,6 +592,16 @@ export class MenuItemsService {
 
       translations: lang ? undefined : itemTranslations[item.id] || {},
       ...(lang ? itemTranslations[item.id] || {} : {}),
+
+      images:
+        item.images?.map((itemImage) => ({
+          id: itemImage.id,
+          image: itemImage.image,
+          priority: itemImage.priority,
+          isActive: itemImage.isActive,
+          createdAt: itemImage.createdAt,
+          updatedAt: itemImage.updatedAt,
+        })) || [],
 
       variants:
         item.variants?.map((variant) => ({

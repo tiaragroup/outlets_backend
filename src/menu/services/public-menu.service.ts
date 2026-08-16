@@ -52,11 +52,16 @@ export class PublicMenuService {
           },
           relations: {
             variants: true,
+            images: true,
           },
           order: {
             priority: 'ASC',
             id: 'ASC',
             variants: {
+              priority: 'ASC',
+              id: 'ASC',
+            },
+            images: {
               priority: 'ASC',
               id: 'ASC',
             },
@@ -105,6 +110,14 @@ export class PublicMenuService {
             name: itemTranslations[item.id]?.name || '',
             description: itemTranslations[item.id]?.description,
             image: item.image,
+            images:
+              item.images
+                ?.filter((itemImage) => itemImage.isActive)
+                .map((itemImage) => ({
+                  id: itemImage.id,
+                  image: itemImage.image,
+                  priority: itemImage.priority,
+                })) || [],
             isActive: item.isActive,
             variants:
               item.variants?.map((variant) => ({

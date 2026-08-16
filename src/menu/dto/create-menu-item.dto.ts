@@ -31,6 +31,19 @@ export class CreateMenuItemVariantDto {
   translations: Record<string, Record<string, string>>;
 }
 
+export class CreateMenuItemImageDto {
+  @IsString()
+  image: string;
+
+  @IsOptional()
+  @IsInt()
+  priority?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+}
+
 export class CreateMenuItemDto {
   @IsOptional()
   @IsInt()
@@ -72,4 +85,13 @@ export class CreateMenuItemDto {
   @IsArray()
   @IsInt({ each: true })
   addonIds?: number[];
+
+  /**
+   * Extra gallery images, separate from the main `image` field.
+   */
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateMenuItemImageDto)
+  images?: CreateMenuItemImageDto[];
 }
